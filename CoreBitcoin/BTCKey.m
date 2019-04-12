@@ -29,6 +29,40 @@ static int     ECDSA_SIG_recover_key_GFp(EC_KEY *eckey, ECDSA_SIG *ecsig, const 
 @interface BTCKey ()
 @end
 
+@implementation BTCKey (GBTKey)
+
+JXBindingProperty(NSString *, type, setType, OBJC_ASSOCIATION_COPY_NONATOMIC);
+
+@end
+
+@interface GBTPublicKeyAddress : BTCPublicKeyAddress
+@end
+
+
+
+
+@implementation GBTPublicKeyAddress
+enum
+{
+    GBTPublicKeyAddressVersion         = 97,
+    BTCPrivateKeyAddressVersion        = 128,
+    BTCScriptHashAddressVersion        = 5,
+    BTCPublicKeyAddressVersionTestnet  = 111,
+    BTCPrivateKeyAddressVersionTestnet = 239,
+    BTCScriptHashAddressVersionTestnet = 196,
+};
+
++ (void) load {
+    [BTCAddress registerAddressClass:self version:[self BTCVersionPrefix]];
+}
+
++ (uint8_t) BTCVersionPrefix {
+    return GBTPublicKeyAddressVersion;
+}
+
+
+@end
+
 @implementation BTCKey {
     BOOL _cleared;
     EC_KEY* _key;
@@ -538,6 +572,9 @@ static int     ECDSA_SIG_recover_key_GFp(EC_KEY *eckey, ECDSA_SIG *ecsig, const 
     CHECK_IF_CLEARED;
     NSData* pubkey = [self publicKeyCached];
     if (pubkey.length == 0) return nil;
+    if ([self.type isEqualToString:@"GBT"]) {
+        return [GBTPublicKeyAddress addressWithData:BTCHash160(pubkey)];
+    }
     return [BTCPublicKeyAddress addressWithData:BTCHash160(pubkey)];
 }
 

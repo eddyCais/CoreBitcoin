@@ -17,6 +17,12 @@
 #define BTCKeychainTestnetPrivateVersion 0x04358394
 #define BTCKeychainTestnetPublicVersion  0x043587CF
 
+@implementation BTCKeychain (GBTKey)
+
+JXBindingProperty(NSString *, type, setType, OBJC_ASSOCIATION_COPY_NONATOMIC);
+
+@end
+
 @interface BTCKeychain ()
 @property(nonatomic, readwrite) NSMutableData* chainCode;
 @property(nonatomic, readwrite) NSMutableData* extendedPublicKeyData;
@@ -154,6 +160,7 @@
     if (_privateKey) {
         BTCKey* key = [[BTCKey alloc] initWithPrivateKey:_privateKey];
         key.publicKeyCompressed = YES;
+        key.type = self.type;
         return key;
     } else {
         return [[BTCKey alloc] initWithPublicKey:self.publicKey];
@@ -283,7 +290,6 @@
     }
 
     BTCKeychain* derivedKeychain = [[BTCKeychain alloc] init];
-
     NSMutableData* data = [NSMutableData data];
     
     if (hardened) {
@@ -339,7 +345,9 @@
     derivedKeychain.parentFingerprint = self.fingerprint;
     derivedKeychain.index = index;
     derivedKeychain.hardened = hardened;
-    
+    ///cjs add
+    derivedKeychain.type = self.type;
+
     return derivedKeychain;
 }
 
@@ -422,7 +430,7 @@
     keychain.index = self.index;
     keychain.depth = self.depth;
     keychain.hardened = self.hardened;
-    
+    keychain.type = self.type;
     return keychain;
 }
 
@@ -577,7 +585,7 @@
     keychain.index = self.index;
     keychain.depth = self.depth;
     keychain.hardened = self.hardened;
-    
+    keychain.type = self.type;
     return keychain;
 }
 

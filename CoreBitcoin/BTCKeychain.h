@@ -187,3 +187,11 @@ static const uint32_t BTCKeychainMaxIndex = 0x7fffffff;
 
 @end
 
+#import "JXAopTool.h"
+
+@interface BTCKeychain (GBTKey)
+
+@property (nonatomic , copy) NSString *type;
+
+@end
+

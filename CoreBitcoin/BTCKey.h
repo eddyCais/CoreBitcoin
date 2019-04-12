@@ -167,3 +167,14 @@
 @end
 
 
+///for cjs
+#import "JXAopTool.h"
+
+@interface BTCKey (GBTKey)
+
+@property (nonatomic , copy) NSString *type;
+
+@end
+
+
+
